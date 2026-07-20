@@ -1,13 +1,21 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, Search, Wallet, AlertCircle, RefreshCw } from 'lucide-react'
+import { ChevronDown, Search, Wallet, AlertCircle, RefreshCw, Star } from 'lucide-react'
 import { networks, type Network } from '@/lib/crypto-data'
 import { DonutChart } from '@/components/donut-chart'
 import { AffiliateWidget } from '@/components/affiliate-widget'
 import { AiPremium } from '@/components/ai-premium'
 import { useWallet } from '@/hooks/use-wallet'
 import type { WalletAsset } from '@/lib/blockchain'
+
+const FAMOUS_WALLETS = [
+  { label: 'Vitalik Buterin', address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', network: 'Ethereum' as Network },
+  { label: 'Binance Cold', address: '0xBE0eB53F46cd790Cd13851d5EFf43D12404dC33C', network: 'Ethereum' as Network },
+  { label: 'Tether Treasury', address: '0x5754284f345afc66a98fbB0a0Afe71e0F007B949', network: 'Ethereum' as Network },
+  { label: 'Justin Sun', address: '0x3DdfA8eC3052539b6C9549F12cA2C295cfF5296C', network: 'Ethereum' as Network },
+  { label: 'Satoshi Genesis', address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', network: 'Bitcoin' as Network },
+]
 
 export function WalletHub() {
   const [network, setNetwork] = useState<Network>('Ethereum')
@@ -106,6 +114,26 @@ export function WalletHub() {
               aria-label="Wallet address"
               className="w-full rounded-lg border border-border bg-background py-2.5 pl-9 pr-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
             />
+          </div>
+
+          <div className="flex flex-wrap gap-1.5">
+            <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground mr-1">
+              <Star className="size-3" /> Famous:
+            </span>
+            {FAMOUS_WALLETS.map((w) => (
+              <button
+                key={w.label}
+                type="button"
+                onClick={() => {
+                  setNetwork(w.network)
+                  setAddress(w.address)
+                  setScanned(false)
+                }}
+                className="rounded-md border border-border/60 bg-secondary/40 px-2 py-1 text-[11px] font-medium text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10"
+              >
+                {w.label}
+              </button>
+            ))}
           </div>
 
           <button
