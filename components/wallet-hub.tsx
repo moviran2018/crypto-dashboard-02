@@ -10,11 +10,11 @@ import { useWallet } from '@/hooks/use-wallet'
 import type { WalletAsset } from '@/lib/blockchain'
 
 const FAMOUS_WALLETS = [
-  { label: 'Vitalik Buterin', address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', network: 'Ethereum' as Network },
-  { label: 'Binance Cold', address: '0xBE0eB53F46cd790Cd13851d5EFf43D12404dC33C', network: 'Ethereum' as Network },
-  { label: 'Tether Treasury', address: '0x5754284f345afc66a98fbB0a0Afe71e0F007B949', network: 'Ethereum' as Network },
-  { label: 'Justin Sun', address: '0x3DdfA8eC3052539b6C9549F12cA2C295cfF5296C', network: 'Ethereum' as Network },
-  { label: 'Satoshi Genesis', address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', network: 'Bitcoin' as Network },
+  { label: 'MetaMask', address: '0x1aD91ee08f21bE3dE0BA2ba6918E714dA6B45836', network: 'Ethereum' as Network },
+  { label: 'Trust Wallet', address: '0xBE0eB53F46cd790Cd13851d5EFf43D12404dC33C', network: 'Ethereum' as Network },
+  { label: 'Tonkeeper', address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1', network: 'Ethereum' as Network },
+  { label: 'Ethereum Foundation', address: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe', network: 'Ethereum' as Network },
+  { label: 'Coinbase Wallet', address: '0x6262998Ced04141b6b0cF4b2B308cA8CE8F2b6e6', network: 'Ethereum' as Network },
 ]
 
 export function WalletHub() {
