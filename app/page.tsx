@@ -1,0 +1,34 @@
+import { TopNavbar } from '@/components/top-navbar'
+import { PromoBanner } from '@/components/promo-banner'
+import { CryptoTable } from '@/components/crypto-table'
+import { WalletHub } from '@/components/wallet-hub'
+
+export default function Page() {
+  return (
+    <div className="min-h-svh cyber-grid">
+      <PromoBanner />
+      <TopNavbar />
+
+      <main className="mx-auto max-w-[1400px] px-4 py-6 md:px-6 md:py-8">
+        <div className="mb-6">
+          <h1 className="text-balance text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+            Multi-Chain Portfolio Tracker
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Real-time markets, wallet insights, and AI risk analysis in one neon hub.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[3fr_2fr]">
+          {/* Left 60% — market table */}
+          <div className="min-w-0 lg:h-[calc(100svh-13rem)]">
+            <CryptoTable />
+          </div>
+
+          {/* Right 40% — wallet hub */}
+          <WalletHub />
+        </div>
+      </main>
+    </div>
+  )
+}
