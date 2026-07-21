@@ -16,7 +16,7 @@ function CoinBadge({ symbol }: { symbol: string }) {
 }
 
 export function CryptoTable() {
-  const { coins, loading, error } = usePrices()
+  const { coins, loading, error, source } = usePrices()
   const [query, setQuery] = useState('')
   const [sortKey, setSortKey] = useState<SortKey>('market_cap_rank')
   const [asc, setAsc] = useState(true)
@@ -49,7 +49,7 @@ export function CryptoTable() {
       <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between md:p-5">
         <div>
           <h2 className="text-lg font-bold tracking-tight text-foreground">Top 100 Assets</h2>
-          <p className="text-xs text-muted-foreground">Live market cap rankings via CoinGecko</p>
+          <p className="text-xs text-muted-foreground">Live market cap rankings via {source}</p>
         </div>
         <div className="relative w-full sm:w-56">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />

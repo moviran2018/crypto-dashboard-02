@@ -31,27 +31,48 @@ async function fetchBinance(limit = 100): Promise<CoinData[]> {
   const res = await fetch('https://api.binance.com/api/v3/ticker/24hr')
   if (!res.ok) throw new Error(`Binance error: ${res.status}`)
   const all: BinanceTicker[] = await res.json()
-  const usdt = all.filter((t) => t.symbol.endsWith('USDT')).slice(0, limit)
-  return usdt.map((t, i) => ({
-    id: t.symbol.toLowerCase(),
-    symbol: t.symbol.replace('USDT', '').toLowerCase(),
-    name: t.symbol.replace('USDT', ''),
-    current_price: Number(t.lastPrice),
-    market_cap: Number(t.quoteVolume) * 1,
-    market_cap_rank: i + 1,
-    price_change_percentage_24h: Number(t.priceChangePercent),
-  }))
+  const usdt = all.filter((t) => t.symbol.endsWith('USDT'))
+    .sort((a, b) => Number(b.quoteVolume) - Number(a.quoteVolume))
+    .slice(0, limit)
+  return usdt.map((t, i) => {
+    const sym = t.symbol.replace('USDT', '')
+    return {
+      id: sym.toLowerCase(),
+      symbol: sym.toLowerCase(),
+      name: COIN_NAMES[sym] || sym,
+      current_price: Number(t.lastPrice),
+      market_cap: Number(t.lastPrice) * Number(t.quoteVolume) / Number(t.lastPrice) || 0,
+      market_cap_rank: i + 1,
+      price_change_percentage_24h: Number(t.priceChangePercent),
+    }
+  })
+}
+
+const COIN_NAMES: Record<string, string> = {
+  BTC: 'Bitcoin', ETH: 'Ethereum', USDT: 'Tether', BNB: 'BNB', SOL: 'Solana',
+  XRP: 'XRP', USDC: 'USD Coin', ADA: 'Cardano', DOGE: 'Dogecoin', AVAX: 'Avalanche',
+  SHIB: 'Shiba Inu', DOT: 'Polkadot', TRX: 'TRON', LINK: 'Chainlink', MATIC: 'Polygon',
+  TON: 'Toncoin', BCH: 'Bitcoin Cash', LTC: 'Litecoin', ICP: 'Internet Computer',
+  UNI: 'Uniswap', DAI: 'Dai', ETC: 'Ethereum Classic', XLM: 'Stellar', APT: 'Aptos',
+  CRO: 'Cronos', FIL: 'Filecoin', HBAR: 'Hedera', ARB: 'Arbitrum', NEAR: 'NEAR Protocol',
+  VET: 'VeChain', OP: 'Optimism', AAVE: 'Aave', SUI: 'Sui', ALGO: 'Algorand',
+  FTM: 'Fantom', STX: 'Stacks', SAND: 'The Sandbox', MANA: 'Decentraland',
+  PEPE: 'Pepe', WIF: 'dogwifhat', BONK: 'Bonk',
 }
 
 export async function fetchTopCoins(perPage = 100): Promise<CoinData[]> {
   try {
-    return await fetchCoinGecko(perPage)
+    return await fetchBinance(perPage)
   } catch {
-    const fallback = await fetchBinance(perPage)
-    if (fallback.length > 0) return fallback
-    throw new Error('All price APIs failed')
+    try {
+      return await fetchCoinGecko(perPage)
+    } catch {
+      throw new Error('All price APIs failed')
+    }
   }
 }
+
+
 
 export async function fetchPrices(symbols: string[]): Promise<Record<string, { usd: number; usd_24h_change?: number }>> {
   const ids = symbols.map((s) => s.toLowerCase()).join(',')

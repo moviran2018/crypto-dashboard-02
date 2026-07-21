@@ -1,10 +1,10 @@
-import { ETH_TOKENS, POLYGON_TOKENS, SOLANA_TOKENS, type ChainToken } from './tokens'
+import { ETH_TOKENS, POLYGON_TOKENS, SOLANA_TOKENS } from './tokens'
 
-const RPC: Record<string, string> = {
-  Ethereum: 'https://cloudflare-eth.com',
-  Bitcoin: 'https://blockchain.info',
-  Polygon: 'https://polygon-rpc.com',
-  Solana: 'https://api.mainnet-beta.solana.com',
+const RPC: Record<string, string[]> = {
+  Ethereum: ['https://ethereum-rpc.publicnode.com', 'https://cloudflare-eth.com', 'https://rpc.ankr.com/eth'],
+  Bitcoin: ['https://blockchain.info'],
+  Polygon: ['https://polygon-rpc.com', 'https://rpc.ankr.com/polygon'],
+  Solana: ['https://api.mainnet-beta.solana.com'],
 }
 
 function encodeBalanceOf(holder: string): string {
@@ -16,16 +16,25 @@ function decodeUint(hex: string): bigint {
   return BigInt(hex)
 }
 
-async function rpcCall(url: string, method: string, params: unknown[]): Promise<unknown> {
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-  })
-  if (!res.ok) throw new Error(`RPC error: ${res.status}`)
-  const json = await res.json()
-  if (json.error) throw new Error(`RPC error: ${json.error.message}`)
-  return json.result
+async function rpcCall(urls: string[], method: string, params: unknown[]): Promise<unknown> {
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+      })
+      if (!res.ok) continue
+      const json = await res.json()
+      if (json.error) continue
+      return json.result
+    } catch { continue }
+  }
+  throw new Error('All RPC endpoints failed for ' + method)
+}
+
+function isValidEthAddress(addr: string): boolean {
+  return /^0x[a-fA-F0-9]{40}$/.test(addr.trim())
 }
 
 export type WalletAsset = {
@@ -39,35 +48,28 @@ export type WalletAsset = {
 const COLORS = ['#f97316', '#fbbf24', '#22d3ee', '#a855f7', '#34d399', '#f472b6', '#64748b', '#06b6d4']
 
 export async function scanEthereum(address: string): Promise<WalletAsset[]> {
-  const url = RPC.Ethereum
+  const addr = address.trim()
+  if (!isValidEthAddress(addr)) {
+    throw new Error('Invalid Ethereum address. Must start with 0x and be 42 characters.')
+  }
+
+  const urls = RPC.Ethereum
   const assets: WalletAsset[] = []
 
-  const balanceHex = await rpcCall(url, 'eth_getBalance', [address, 'latest']) as string
+  const balanceHex = await rpcCall(urls, 'eth_getBalance', [addr, 'latest']) as string
   const ethBalance = Number(decodeUint(balanceHex)) / 1e18
   if (ethBalance > 0) {
     assets.push({ symbol: 'ETH', name: 'Ethereum', amount: ethBalance.toFixed(4) + ' ETH', value: 0, color: COLORS[0] })
   }
 
-  const tokenCalls = ETH_TOKENS.map((t) => ({
-    to: t.address,
-    data: encodeBalanceOf(address),
-  }))
-
-  const results = await Promise.allSettled(
-    tokenCalls.map((call) =>
-      rpcCall(url, 'eth_call', [call, 'latest']).then((r) => ({ token: call, result: r as string }))
-    )
-  )
-
   const prices = await fetchTokenPrices(ETH_TOKENS)
 
   let ci = 1
-  for (let i = 0; i < results.length; i++) {
-    const r = results[i]
-    if (r.status === 'fulfilled') {
-      const balance = Number(decodeUint(r.value.result)) / 10 ** ETH_TOKENS[i].decimals
-      if (balance > 0) {
-        const token = ETH_TOKENS[i]
+  for (const token of ETH_TOKENS) {
+    try {
+      const result = await rpcCall(urls, 'eth_call', [{ to: token.address, data: encodeBalanceOf(addr) }, 'latest']) as string
+      const balance = Number(decodeUint(result)) / 10 ** token.decimals
+      if (balance > 0.001) {
         const price = prices[token.coingeckoId]?.usd || 0
         assets.push({
           symbol: token.symbol,
@@ -78,42 +80,35 @@ export async function scanEthereum(address: string): Promise<WalletAsset[]> {
         })
         ci++
       }
-    }
+    } catch { continue }
   }
 
   return assets
 }
 
 export async function scanPolygon(address: string): Promise<WalletAsset[]> {
-  const url = RPC.Polygon
-  const assets: WalletAsset[] = []
-
-  const balanceHex = await rpcCall(url, 'eth_getBalance', [address, 'latest']) as string
-  const maticBalance = Number(decodeUint(balanceHex)) / 1e18
-  if (maticBalance > 0) {
-    assets.push({ symbol: 'MATIC', name: 'Polygon', amount: maticBalance.toFixed(4) + ' MATIC', value: 0, color: COLORS[0] })
+  const addr = address.trim()
+  if (!isValidEthAddress(addr)) {
+    throw new Error('Invalid Polygon address. Must start with 0x and be 42 characters.')
   }
 
-  const tokenCalls = POLYGON_TOKENS.map((t) => ({
-    to: t.address,
-    data: encodeBalanceOf(address),
-  }))
+  const urls = RPC.Polygon
+  const assets: WalletAsset[] = []
 
-  const results = await Promise.allSettled(
-    tokenCalls.map((call) =>
-      rpcCall(url, 'eth_call', [call, 'latest']).then((r) => ({ token: call, result: r as string }))
-    )
-  )
+  const balanceHex = await rpcCall(urls, 'eth_getBalance', [addr, 'latest']) as string
+  const maticBalance = Number(decodeUint(balanceHex)) / 1e18
+  if (maticBalance > 0.001) {
+    assets.push({ symbol: 'MATIC', name: 'Polygon', amount: maticBalance.toFixed(4) + ' MATIC', value: 0, color: COLORS[0] })
+  }
 
   const prices = await fetchTokenPrices(POLYGON_TOKENS)
 
   let ci = 1
-  for (let i = 0; i < results.length; i++) {
-    const r = results[i]
-    if (r.status === 'fulfilled') {
-      const balance = Number(decodeUint(r.value.result)) / 10 ** POLYGON_TOKENS[i].decimals
-      if (balance > 0) {
-        const token = POLYGON_TOKENS[i]
+  for (const token of POLYGON_TOKENS) {
+    try {
+      const result = await rpcCall(urls, 'eth_call', [{ to: token.address, data: encodeBalanceOf(addr) }, 'latest']) as string
+      const balance = Number(decodeUint(result)) / 10 ** token.decimals
+      if (balance > 0.001) {
         const price = prices[token.coingeckoId]?.usd || 0
         assets.push({
           symbol: token.symbol,
@@ -124,26 +119,27 @@ export async function scanPolygon(address: string): Promise<WalletAsset[]> {
         })
         ci++
       }
-    }
+    } catch { continue }
   }
 
   return assets
 }
 
 export async function scanSolana(address: string): Promise<WalletAsset[]> {
-  const url = RPC.Solana
+  const addr = address.trim()
+  const urls = RPC.Solana
   const assets: WalletAsset[] = []
 
-  const balanceResult = await rpcCall(url, 'getBalance', [address]) as { value: number }
+  const balanceResult = await rpcCall(urls, 'getBalance', [addr]) as { value: number }
   const solBalance = balanceResult.value / 1e9
-  if (solBalance > 0) {
+  if (solBalance > 0.001) {
     assets.push({ symbol: 'SOL', name: 'Solana', amount: solBalance.toFixed(4) + ' SOL', value: 0, color: COLORS[0] })
   }
 
   let tokenAccounts: { account: { data: { parsed: { info: { mint: string; tokenAmount: { uiAmount: number } } } } } }[] = []
   try {
-    const result = await rpcCall(url, 'getTokenAccountsByOwner', [
-      address,
+    const result = await rpcCall(urls, 'getTokenAccountsByOwner', [
+      addr,
       { programId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' },
       { encoding: 'jsonParsed' },
     ]) as { value: typeof tokenAccounts }

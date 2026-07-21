@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronDown, Search, Wallet, AlertCircle, RefreshCw, Star } from 'lucide-react'
 import { networks, type Network } from '@/lib/crypto-data'
 import { DonutChart } from '@/components/donut-chart'
@@ -9,12 +9,12 @@ import { AiPremium } from '@/components/ai-premium'
 import { useWallet } from '@/hooks/use-wallet'
 import type { WalletAsset } from '@/lib/blockchain'
 
-const FAMOUS_WALLETS = [
-  { label: 'MetaMask', address: '0x1aD91ee08f21bE3dE0BA2ba6918E714dA6B45836', network: 'Ethereum' as Network },
-  { label: 'Trust Wallet', address: '0xBE0eB53F46cd790Cd13851d5EFf43D12404dC33C', network: 'Ethereum' as Network },
-  { label: 'Tonkeeper', address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1', network: 'Ethereum' as Network },
+const SAMPLE_WALLETS = [
+  { label: 'ConsenSys (MetaMask)', address: '0x1aD91ee08f21bE3dE0BA2ba6918E714dA6B45836', network: 'Ethereum' as Network },
+  { label: 'Binance Reserve', address: '0xBE0eB53F46cd790Cd13851d5EFf43D12404dC33C', network: 'Ethereum' as Network },
+  { label: 'TON Bridge', address: '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1', network: 'Ethereum' as Network },
   { label: 'Ethereum Foundation', address: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe', network: 'Ethereum' as Network },
-  { label: 'Coinbase Wallet', address: '0x6262998Ced04141b6b0cF4b2B308cA8CE8F2b6e6', network: 'Ethereum' as Network },
+  { label: 'Coinbase Hot Wallet', address: '0x6262998Ced04141b6b0cF4b2B308cA8CE8F2b6e6', network: 'Ethereum' as Network },
 ]
 
 export function WalletHub() {
@@ -22,7 +22,40 @@ export function WalletHub() {
   const [address, setAddress] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [scanned, setScanned] = useState(false)
+  const [connecting, setConnecting] = useState(false)
   const { assets, loading, error, scan } = useWallet()
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.ethereum) {
+      window.ethereum.on?.('accountsChanged', (accounts: string[]) => {
+        if (accounts.length > 0) {
+          setAddress(accounts[0])
+        }
+      })
+    }
+  }, [])
+
+  async function connectMetaMask() {
+    if (typeof window === 'undefined' || !window.ethereum) {
+      setScanned(true)
+      setAddress('')
+      return
+    }
+    setConnecting(true)
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      if (accounts.length > 0) {
+        setNetwork('Ethereum')
+        setAddress(accounts[0])
+        setScanned(true)
+        scan('Ethereum', accounts[0])
+      }
+    } catch (e) {
+      setScanned(true)
+    } finally {
+      setConnecting(false)
+    }
+  }
 
   function handleScan() {
     if (!address.trim()) return
@@ -49,6 +82,15 @@ export function WalletHub() {
         </div>
 
         <div className="flex flex-col gap-2.5">
+          <button
+            type="button"
+            onClick={connectMetaMask}
+            className="flex items-center justify-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-4 py-3 text-sm font-bold text-primary transition-all hover:bg-primary/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            <Wallet className="size-4" />
+            {connecting ? 'Connecting...' : 'Connect MetaMask'}
+          </button>
+
           <div className="relative">
             <button
               type="button"
@@ -101,30 +143,10 @@ export function WalletHub() {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleScan()}
-              placeholder="Paste public wallet address..."
+              placeholder="Or paste any wallet address..."
               aria-label="Wallet address"
               className="w-full rounded-lg border border-border bg-background py-2.5 pl-9 pr-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
             />
-          </div>
-
-          <div className="flex flex-wrap gap-1.5">
-            <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground mr-1">
-              <Star className="size-3" /> Famous:
-            </span>
-            {FAMOUS_WALLETS.map((w) => (
-              <button
-                key={w.label}
-                type="button"
-                onClick={() => {
-                  setNetwork(w.network)
-                  setAddress(w.address)
-                  setScanned(false)
-                }}
-                className="rounded-md border border-border/60 bg-secondary/40 px-2 py-1 text-[11px] font-medium text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10"
-              >
-                {w.label}
-              </button>
-            ))}
           </div>
 
           <button
@@ -139,6 +161,26 @@ export function WalletHub() {
               'Scan Wallet'
             )}
           </button>
+
+          <div className="flex flex-wrap gap-1.5">
+            <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground mr-1">
+              <Star className="size-3" /> Sample:
+            </span>
+            {SAMPLE_WALLETS.map((w) => (
+              <button
+                key={w.label}
+                type="button"
+                onClick={() => {
+                  setNetwork(w.network)
+                  setAddress(w.address)
+                  setScanned(false)
+                }}
+                className="rounded-md border border-border/60 bg-secondary/40 px-2 py-1 text-[11px] font-medium text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10"
+              >
+                {w.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {error && (
@@ -161,7 +203,7 @@ export function WalletHub() {
             <DonutChart holdings={holdings} />
           ) : (
             <p className="py-6 text-center text-sm text-muted-foreground">
-              {scanned ? 'No assets found' : 'Enter a wallet address and scan to see holdings'}
+              {scanned ? 'No assets found' : 'Connect MetaMask or paste an address to see holdings'}
             </p>
           )}
         </div>
