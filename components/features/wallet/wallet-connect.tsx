@@ -33,7 +33,7 @@ export function WalletConnect({ connectedWallet, connecting, onConnect, onDiscon
 
   if (connectedWallet) {
     return (
-      <div className="rounded-lg border border-primary/40 bg-primary/5 p-3 shadow-[0_0_15px_rgba(249,115,22,0.1)]">
+      <div className="rounded-lg border border-accent/40 bg-accent/5 p-3 shadow-[0_0_15px_rgba(251,191,36,0.1)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckCircle className="size-4 text-green-500" />
@@ -54,20 +54,20 @@ export function WalletConnect({ connectedWallet, connecting, onConnect, onDiscon
         type="button"
         onClick={() => setOpen((v) => !v)}
         disabled={connecting}
-        className="flex w-full items-center justify-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-4 py-3 text-sm font-bold text-primary transition-all hover:bg-primary/20 hover:shadow-[0_0_20px_rgba(249,115,22,0.25)]"
+        className="flex w-full items-center justify-center gap-2 rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-bold text-accent transition-all hover:bg-accent/20 hover:shadow-[0_0_20px_rgba(251,191,36,0.25)]"
       >
         <Wallet className="size-4" />
         {connecting ? 'Connecting...' : 'Select Wallet'}
         <ChevronDown className={`size-4 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <ul className="absolute z-20 mt-1.5 w-full overflow-hidden rounded-lg border border-primary/20 bg-popover/95 backdrop-blur-sm shadow-[0_0_30px_rgba(249,115,22,0.15)]">
+        <ul className="absolute z-20 mt-1.5 w-full overflow-hidden rounded-lg border border-accent/20 bg-popover/95 backdrop-blur-sm shadow-[0_0_30px_rgba(251,191,36,0.15)]">
           {WALLET_OPTIONS.map((w) => (
             <li key={w.id}>
               <button
                 type="button"
                 onClick={() => { onConnect(w); setOpen(false) }}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-foreground transition-colors hover:bg-primary/[0.06]"
+                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-foreground transition-colors hover:bg-accent/[0.06]"
               >
                 <span className="text-lg">{w.icon}</span>
                 <div>

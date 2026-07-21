@@ -59,7 +59,7 @@ export function TopNavbar() {
             <Hexagon className="size-4 text-primary md:size-5" />
           </div>
           <div className="leading-none">
-            <p className="text-sm font-bold tracking-tight text-foreground text-glow-orange">NeonChain</p>
+            <p className="text-sm font-bold tracking-tight text-foreground">Neon<span className="text-glow-gold text-accent">Chain</span></p>
             <p className="hidden text-[10px] font-medium uppercase tracking-widest text-muted-foreground sm:block">
               Multi-Chain Hub
             </p>
@@ -85,7 +85,7 @@ export function TopNavbar() {
 
         <button
           type="button"
-          className="ml-auto flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-[0_0_20px_rgba(249,115,22,0.45)] transition-all hover:shadow-[0_0_50px_rgba(249,115,22,0.8)] hover:brightness-110 md:gap-2 md:px-4 md:py-2.5 md:text-sm"
+          className="ml-auto flex shrink-0 items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-semibold text-accent-foreground shadow-[0_0_20px_rgba(251,191,36,0.45)] transition-all hover:shadow-[0_0_50px_rgba(251,191,36,0.8)] hover:brightness-110 md:gap-2 md:px-4 md:py-2.5 md:text-sm"
         >
           <Wallet className="size-3.5 md:size-4" />
           <span className="hidden sm:inline">Connect</span> Hub
