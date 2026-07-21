@@ -8,7 +8,6 @@ import { AffiliateWidget } from '@/components/features/affiliate/affiliate-widge
 import { AiPremium } from '@/components/features/affiliate/ai-premium'
 import { WalletConnect, type WalletOption } from './wallet-connect'
 import { WalletScanner } from './wallet-scanner'
-import { WalletSample, type SampleWallet } from './wallet-sample'
 import { WalletDisplay } from './wallet-display'
 import { WalletError } from './wallet-error'
 
@@ -89,16 +88,9 @@ export function WalletHub() {
     }
   }
 
-  function handleSampleSelect(sample: SampleWallet) {
-    setConnectedWallet(null)
-    setNetwork(sample.network)
-    setAddress(sample.address)
-    scan(sample.network, sample.address)
-  }
-
   return (
     <aside className="flex flex-col gap-4">
-      <section className="rounded-2xl border border-border bg-card p-5">
+      <section className="rounded-2xl border border-border bg-card p-4 md:p-5">
         <div className="mb-4 flex items-center gap-2">
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/40">
             <Wallet className="size-4 text-primary" />
@@ -129,8 +121,6 @@ export function WalletHub() {
             onAddressChange={(a) => { setAddress(a); setConnectedWallet(null) }}
             onScan={() => { if (address.trim()) { setConnectedWallet(null); scan(network, address.trim()) } }}
           />
-
-          <WalletSample onSelect={handleSampleSelect} />
         </div>
 
         <WalletDisplay assets={assets} address={address} connected={!!connectedWallet} />

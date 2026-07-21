@@ -1,8 +1,6 @@
 export { WalletHub } from './wallet-hub'
 export { WalletConnect } from './wallet-connect'
 export { WalletScanner } from './wallet-scanner'
-export { WalletSample } from './wallet-sample'
 export { WalletDisplay } from './wallet-display'
 export { WalletError } from './wallet-error'
 export type { WalletOption } from './wallet-connect'
-export type { SampleWallet } from './wallet-sample'

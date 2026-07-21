@@ -53,15 +53,15 @@ export function CryptoTable() {
         </div>
       </div>
 
-      <div className="grid grid-cols-[2.5rem_1fr_auto_auto] items-center gap-3 border-b border-border bg-secondary/40 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground md:grid-cols-[3rem_1fr_9rem_7rem] md:px-5">
-        <button type="button" onClick={() => toggleSort('market_cap_rank')} className="flex items-center gap-1 text-left transition-colors hover:text-primary">
+      <div className="grid grid-cols-[2rem_1fr_auto_auto] items-center gap-2 border-b border-border bg-secondary/40 px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground md:grid-cols-[3rem_1fr_9rem_7rem] md:gap-3 md:px-5">
+        <button type="button" onClick={() => toggleSort('market_cap_rank')} className="flex items-center gap-0.5 text-left transition-colors hover:text-primary md:gap-1">
           # <ArrowDownUp className="size-3" />
         </button>
         <span>Name</span>
-        <button type="button" onClick={() => toggleSort('current_price')} className="flex items-center justify-end gap-1 transition-colors hover:text-primary">
+        <button type="button" onClick={() => toggleSort('current_price')} className="flex items-center gap-0.5 transition-colors hover:text-primary md:gap-1">
           Price <ArrowDownUp className="size-3" />
         </button>
-        <button type="button" onClick={() => toggleSort('price_change_percentage_24h')} className="flex items-center justify-end gap-1 transition-colors hover:text-primary">
+        <button type="button" onClick={() => toggleSort('price_change_percentage_24h')} className="flex items-center gap-0.5 transition-colors hover:text-primary md:gap-1">
           24h <ArrowDownUp className="size-3" />
         </button>
       </div>
