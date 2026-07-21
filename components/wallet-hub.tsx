@@ -35,6 +35,10 @@ export function WalletHub() {
     }
   }, [])
 
+  const CHAIN_NETWORK: Record<string, Network> = {
+    '0x1': 'Ethereum', '0x89': 'Polygon', '0x38': 'Ethereum',
+  }
+
   async function connectMetaMask() {
     if (typeof window === 'undefined' || !window.ethereum) {
       setScanned(true)
@@ -44,11 +48,13 @@ export function WalletHub() {
     setConnecting(true)
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' }) as string
+      const net = CHAIN_NETWORK[chainId] || 'Ethereum'
       if (accounts.length > 0) {
-        setNetwork('Ethereum')
+        setNetwork(net)
         setAddress(accounts[0])
         setScanned(true)
-        scan('Ethereum', accounts[0])
+        scan(net, accounts[0])
       }
     } catch (e) {
       setScanned(true)

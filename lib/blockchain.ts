@@ -58,9 +58,7 @@ export async function scanEthereum(address: string): Promise<WalletAsset[]> {
 
   const balanceHex = await rpcCall(urls, 'eth_getBalance', [addr, 'latest']) as string
   const ethBalance = Number(decodeUint(balanceHex)) / 1e18
-  if (ethBalance > 0) {
-    assets.push({ symbol: 'ETH', name: 'Ethereum', amount: ethBalance.toFixed(4) + ' ETH', value: 0, color: COLORS[0] })
-  }
+  assets.push({ symbol: 'ETH', name: 'Ethereum', amount: ethBalance.toFixed(4) + ' ETH', value: 0, color: COLORS[0] })
 
   const prices = await fetchTokenPrices(ETH_TOKENS)
 

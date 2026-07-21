@@ -15,9 +15,6 @@ export function useWallet() {
     try {
       const result = await scanWallet(network, address)
       setAssets(result)
-      if (result.length === 0) {
-        setError('No assets found for this address on ' + network)
-      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to scan wallet')
       setAssets([])
