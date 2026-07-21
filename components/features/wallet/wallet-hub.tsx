@@ -90,13 +90,13 @@ export function WalletHub() {
 
   return (
     <aside className="flex flex-col gap-4">
-      <section className="rounded-2xl border border-border bg-card p-4 md:p-5">
+      <section className="rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm p-4 md:p-5 animate-neon-orange">
         <div className="mb-4 flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/40">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/15 ring-1 ring-primary/50 shadow-[0_0_15px_rgba(249,115,22,0.2)]">
             <Wallet className="size-4 text-primary" />
           </div>
           <div>
-            <h2 className="text-lg font-bold tracking-tight text-foreground">Wallet Insights Hub</h2>
+            <h2 className="text-lg font-bold tracking-tight text-foreground text-glow-orange">Wallet Insights Hub</h2>
             <p className="text-xs text-muted-foreground">Scan any public address across chains</p>
           </div>
         </div>

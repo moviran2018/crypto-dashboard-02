@@ -52,21 +52,21 @@ export function TopNavbar() {
   const loop = [...tickers, ...tickers, ...tickers, ...tickers]
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl safe-top">
+    <header className="sticky top-0 z-40 border-b border-primary/10 bg-black/70 backdrop-blur-2xl safe-top shimmer-border">
       <div className="flex h-14 items-center gap-3 px-3 md:h-16 md:gap-4 md:px-6">
-        <div className="flex shrink-0 items-center gap-2">
-          <div className="relative flex size-8 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/40 md:size-9">
+        <div className="flex shrink-0 items-center gap-2 card-3d">
+          <div className="relative flex size-8 items-center justify-center rounded-lg bg-primary/15 ring-1 ring-primary/50 md:size-9 animate-neon-orange">
             <Hexagon className="size-4 text-primary md:size-5" />
           </div>
           <div className="leading-none">
-            <p className="text-sm font-bold tracking-tight text-foreground">NeonChain</p>
+            <p className="text-sm font-bold tracking-tight text-foreground text-glow-orange">NeonChain</p>
             <p className="hidden text-[10px] font-medium uppercase tracking-widest text-muted-foreground sm:block">
               Multi-Chain Hub
             </p>
           </div>
         </div>
 
-        <div className="relative hidden flex-1 overflow-hidden md:block" aria-label="Live market prices">
+        <div className="relative hidden flex-1 overflow-hidden md:block scan-line" aria-label="Live market prices">
           <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-background to-transparent" />
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-background to-transparent" />
           {tickers.length > 0 && (
@@ -85,7 +85,7 @@ export function TopNavbar() {
 
         <button
           type="button"
-          className="ml-auto flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-[0_0_20px_rgba(249,115,22,0.45)] transition-all hover:shadow-[0_0_30px_rgba(249,115,22,0.7)] md:gap-2 md:px-4 md:py-2.5 md:text-sm"
+          className="ml-auto flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-[0_0_20px_rgba(249,115,22,0.45)] transition-all hover:shadow-[0_0_50px_rgba(249,115,22,0.8)] hover:brightness-110 md:gap-2 md:px-4 md:py-2.5 md:text-sm"
         >
           <Wallet className="size-3.5 md:size-4" />
           <span className="hidden sm:inline">Connect</span> Hub

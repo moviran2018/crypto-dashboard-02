@@ -22,9 +22,9 @@ export function DonutChart({ holdings }: { holdings: TokenHolding[] }) {
   const focused = active !== null ? holdings[active] : null
 
   return (
-    <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6">
+    <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-6 card-3d">
       <div className="relative shrink-0">
-        <svg width="180" height="180" viewBox="0 0 180 180" className="-rotate-90">
+        <svg width="180" height="180" viewBox="0 0 180 180" className="-rotate-90 drop-shadow-[0_0_15px_rgba(249,115,22,0.15)]">
           <circle cx="90" cy="90" r={radius} fill="none" stroke="var(--secondary)" strokeWidth={stroke} />
           {segments.map((seg, i) => (
             <circle
@@ -55,14 +55,13 @@ export function DonutChart({ holdings }: { holdings: TokenHolding[] }) {
             })}
           </span>
           {focused && (
-            <span className="font-mono text-[11px] text-primary">
+            <span className="font-mono text-[11px] text-primary text-glow-orange">
               {(focused.fraction * 100).toFixed(1)}%
             </span>
           )}
         </div>
       </div>
 
-      {/* Legend */}
       <ul className="flex w-full flex-col gap-2">
         {segments.map((seg, i) => (
           <li key={seg.symbol}>
@@ -70,10 +69,10 @@ export function DonutChart({ holdings }: { holdings: TokenHolding[] }) {
               type="button"
               onMouseEnter={() => setActive(i)}
               onMouseLeave={() => setActive(null)}
-              className="flex w-full items-center justify-between gap-3 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-secondary"
+              className="flex w-full items-center justify-between gap-3 rounded-lg px-2 py-1.5 text-left transition-all hover:bg-primary/[0.06] hover:shadow-[inset_0_0_0_1px_rgba(249,115,22,0.3)]"
             >
               <span className="flex min-w-0 items-center gap-2">
-                <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: seg.color }} />
+                <span className="size-2.5 shrink-0 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.3)]" style={{ backgroundColor: seg.color }} />
                 <span className="min-w-0">
                   <span className="block truncate text-sm font-medium text-foreground">{seg.name}</span>
                   <span className="block font-mono text-[11px] text-muted-foreground">{seg.amount}</span>

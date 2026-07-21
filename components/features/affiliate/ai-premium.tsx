@@ -32,7 +32,7 @@ export function AiPremium() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="animate-gold-glow group flex w-full items-center justify-center gap-2.5 rounded-xl border border-accent/60 bg-gradient-to-r from-accent/25 via-accent/15 to-accent/25 px-4 py-4 text-base font-bold text-accent transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="animate-neon-gold group flex w-full items-center justify-center gap-2.5 rounded-xl border border-accent/50 bg-gradient-to-r from-accent/20 via-accent/10 to-accent/20 px-4 py-4 text-base font-bold text-accent transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent card-3d-glow"
       >
         <Crown className="size-5" />
         Generate AI Portfolio Risk Analysis
@@ -52,8 +52,9 @@ export function AiPremium() {
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-black/80 backdrop-blur-sm"
           />
-          <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-accent/40 bg-card p-6 shadow-[0_0_60px_rgba(251,191,36,0.25)]">
+          <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-accent/40 bg-card/95 backdrop-blur-sm p-6 shadow-[0_0_60px_rgba(251,191,36,0.3),0_0_120px_rgba(251,191,36,0.1)] card-3d">
             <div className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-accent/20 blur-3xl" />
+            <div className="pointer-events-none absolute -left-10 -bottom-10 size-32 rounded-full bg-accent/10 blur-3xl" />
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -64,10 +65,10 @@ export function AiPremium() {
             </button>
 
             <div className="relative flex flex-col items-center text-center">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-accent/15 ring-1 ring-accent/50">
+              <div className="flex size-14 items-center justify-center rounded-2xl bg-accent/15 ring-1 ring-accent/50 shadow-[0_0_20px_rgba(251,191,36,0.2)]">
                 <Crown className="size-7 text-accent" />
               </div>
-              <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent">
+              <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent text-glow-gold">
                 <Lock className="size-3" /> Premium Locked
               </span>
               <h3 id="premium-title" className="mt-3 text-xl font-bold text-foreground">
@@ -82,7 +83,7 @@ export function AiPremium() {
             <ul className="relative mt-5 flex flex-col gap-2.5">
               {PERKS.map((perk) => (
                 <li key={perk} className="flex items-start gap-2.5 text-sm text-foreground/90">
-                  <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
+                  <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent shadow-[0_0_8px_rgba(251,191,36,0.2)]">
                     <Check className="size-3.5" />
                   </span>
                   {perk}
@@ -92,7 +93,7 @@ export function AiPremium() {
 
             <button
               type="button"
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-base font-bold text-accent-foreground transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-base font-bold text-accent-foreground shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all hover:brightness-110 hover:shadow-[0_0_40px_rgba(251,191,36,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <Sparkles className="size-4" />
               Upgrade to Pro — $19/mo
