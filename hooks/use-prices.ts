@@ -23,7 +23,7 @@ export function usePrices() {
     try {
       const data = await staleWhileRevalidate<CoinData[]>(
         'prices', 60_000,
-        () => fetchTopCoins(100),
+        () => fetchTopCoins(130),
         (fresh) => { if (mounted.current) { setCoins(fresh); setSource('live'); setLoading(false); setError(null) } },
       )
       if (data && mounted.current) {
@@ -34,7 +34,7 @@ export function usePrices() {
       } else if (!data && mounted.current && coins.length === 0) {
         // Try a direct fetch if staleWhileRevalidate returned null
         try {
-          const fresh = await fetchTopCoins(100)
+          const fresh = await fetchTopCoins(130)
           if (mounted.current && fresh.length > 0) {
             setCoins(fresh)
             setSource('live')

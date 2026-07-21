@@ -7,6 +7,8 @@ import { CryptoRow } from './crypto-row'
 
 type SortKey = 'market_cap_rank' | 'current_price' | 'price_change_percentage_24h'
 
+const CJK_RE = /[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/
+
 export function CryptoTable() {
   const { coins, loading, error, source } = usePrices()
   const [query, setQuery] = useState('')
@@ -14,7 +16,8 @@ export function CryptoTable() {
   const [asc, setAsc] = useState(true)
 
   const rows = useMemo(() => {
-    const filtered = coins.filter(
+    const clean = coins.filter((c) => !CJK_RE.test(c.name) && !CJK_RE.test(c.symbol)).slice(0, 100)
+    const filtered = clean.filter(
       (c) =>
         c.name.toLowerCase().includes(query.toLowerCase()) ||
         c.symbol.toLowerCase().includes(query.toLowerCase()),

@@ -28,7 +28,7 @@ export default function Page() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-[3fr_2fr]">
-              <div className="min-w-0 lg:h-[calc(100svh-13rem)] card-3d-glow rounded-2xl">
+              <div className="min-w-0 lg:max-h-[calc(100svh-13rem)] lg:min-h-[520px] card-3d-glow rounded-2xl">
                 <ErrorBoundary name="Price Table">
                   <CryptoTable />
                 </ErrorBoundary>
