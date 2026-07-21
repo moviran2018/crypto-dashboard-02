@@ -37,7 +37,7 @@ export function CryptoTable() {
   }
 
   return (
-    <section className="flex h-full flex-col overflow-hidden rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm">
+    <section className="flex max-h-[calc(100vh-11rem)] flex-col overflow-hidden rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm lg:max-h-[calc(100vh-14rem)]">
       <div className="flex flex-col gap-3 border-b border-primary/15 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5">
         <div>
           <h2 className="text-lg font-bold tracking-tight text-foreground">Top 100 <span className="text-glow-gold text-accent">Assets</span></h2>
