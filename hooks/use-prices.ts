@@ -10,6 +10,7 @@ export function usePrices() {
   const [error, setError] = useState<string | null>(null)
   const [source, setSource] = useState('cache')
   const mounted = useRef(true)
+  const hasData = useRef(false)
 
   useEffect(() => {
     mounted.current = true
@@ -24,30 +25,23 @@ export function usePrices() {
       const data = await staleWhileRevalidate<CoinData[]>(
         'prices', 60_000,
         () => fetchTopCoins(130),
-        (fresh) => { if (mounted.current) { setCoins(fresh); setSource('live'); setLoading(false); setError(null) } },
+        (fresh) => {
+          if (!mounted.current || fresh.length === 0) return
+          setCoins(fresh)
+          hasData.current = true
+          setSource('live')
+          setError(null)
+          setLoading(false)
+        },
       )
-      if (data && mounted.current) {
+      if (data && data.length > 0 && mounted.current) {
         setCoins(data)
+        hasData.current = true
         setSource('cache')
-        setLoading(false)
         setError(null)
-      } else if (!data && mounted.current && coins.length === 0) {
-        // Try a direct fetch if staleWhileRevalidate returned null
-        try {
-          const fresh = await fetchTopCoins(130)
-          if (mounted.current && fresh.length > 0) {
-            setCoins(fresh)
-            setSource('live')
-            setError(null)
-          }
-        } catch {
-          if (mounted.current) setError('Unable to load prices. Check your connection.')
-        }
       }
     } catch {
-      if (mounted.current && coins.length === 0) {
-        setError('Unable to load prices.')
-      }
+      // never clear existing data on error
     } finally {
       if (mounted.current) setLoading(false)
     }
