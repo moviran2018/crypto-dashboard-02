@@ -6,14 +6,8 @@ import { ErrorBoundary } from '@/components/error-boundary'
 
 export default function Page() {
   return (
-    <div className="relative min-h-svh cyber-grid">
-      <div className="ambient-orbs" aria-hidden="true">
-        <div className="ambient-orb" />
-        <div className="ambient-orb" />
-        <div className="ambient-orb" />
-      </div>
-
-      <div className="relative z-10 scene-3d">
+    <div className="min-h-svh cyber-grid">
+      <div className="scene-3d">
         <ErrorBoundary name="Promo">
           <PromoBanner />
         </ErrorBoundary>

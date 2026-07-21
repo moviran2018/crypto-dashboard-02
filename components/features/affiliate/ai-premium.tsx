@@ -32,7 +32,7 @@ export function AiPremium() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="animate-neon-gold group flex w-full items-center justify-center gap-2.5 rounded-xl border border-accent/50 bg-gradient-to-r from-accent/20 via-accent/10 to-accent/20 px-4 py-4 text-base font-bold text-accent transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent card-3d-glow"
+        className="group flex w-full items-center justify-center gap-2.5 rounded-xl border border-accent/50 bg-gradient-to-r from-accent/20 via-accent/10 to-accent/20 px-4 py-4 text-base font-bold text-accent transition-all hover:brightness-110 hover:shadow-[0_0_30px_rgba(251,191,36,0.3)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent card-3d-glow"
       >
         <Crown className="size-5" />
         Generate AI Portfolio Risk Analysis

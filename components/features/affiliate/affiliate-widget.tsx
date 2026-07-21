@@ -2,7 +2,7 @@ import { Flame, ArrowRight } from 'lucide-react'
 
 export function AffiliateWidget() {
   return (
-    <div className="animate-neon-orange relative overflow-hidden rounded-xl border border-primary/50 bg-gradient-to-br from-primary/20 via-black/60 to-card p-4 card-3d-glow">
+    <div className="relative overflow-hidden rounded-xl border border-primary/50 bg-gradient-to-br from-primary/20 via-black/60 to-card p-4 card-3d-glow">
       <div className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full bg-primary/30 blur-3xl" />
       <div className="pointer-events-none absolute -left-6 -bottom-6 size-20 rounded-full bg-gold/20 blur-3xl" />
       <div className="relative flex items-center gap-3">
