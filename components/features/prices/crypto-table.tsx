@@ -37,7 +37,7 @@ export function CryptoTable() {
   }
 
   return (
-    <section className="rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm overflow-hidden">
+    <section className="rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm">
       <div className="flex flex-col gap-3 border-b border-primary/15 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5">
         <div>
           <h2 className="text-lg font-bold tracking-tight text-foreground">Top 100 <span className="text-glow-gold text-accent">Assets</span></h2>
@@ -69,7 +69,7 @@ export function CryptoTable() {
         </button>
       </div>
 
-      <div className="overflow-y-scroll" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+      <div>
         {loading && (
           <div className="flex items-center justify-center p-12">
             <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent shadow-[0_0_15px_rgba(249,115,22,0.3)]" />
