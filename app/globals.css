@@ -116,33 +116,28 @@
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
 }
 
-/* ─── 3D (hover-only, lightweight) ─── */
-.scene-3d {
-  perspective: 1200px;
-}
-
+/* ─── Hover lift (2D, no blur) ─── */
 .card-3d {
-  transition: transform 0.3s ease;
-  transform-style: preserve-3d;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-3d:hover {
-  transform: rotateX(2deg) rotateY(4deg) translateZ(6px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .card-3d-glow {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  transform-style: preserve-3d;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-3d-glow:hover {
-  transform: rotateX(1.5deg) rotateY(3deg) translateZ(4px);
-  box-shadow: var(--glow-orange);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-orange), 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .card-3d-glow-gold:hover {
-  transform: rotateX(1.5deg) rotateY(3deg) translateZ(4px);
-  box-shadow: var(--glow-gold);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-gold), 0 4px 20px rgba(0,0,0,0.3);
 }
 
 /* ─── Cyber Grid (static, no animation) ─── */
