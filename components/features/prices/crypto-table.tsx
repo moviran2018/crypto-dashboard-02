@@ -37,7 +37,7 @@ export function CryptoTable() {
   }
 
   return (
-    <section className="flex max-h-[calc(100vh-11rem)] flex-col overflow-hidden rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm lg:max-h-[calc(100vh-14rem)]">
+    <section className="rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm overflow-hidden">
       <div className="flex flex-col gap-3 border-b border-primary/15 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5">
         <div>
           <h2 className="text-lg font-bold tracking-tight text-foreground">Top 100 <span className="text-glow-gold text-accent">Assets</span></h2>
@@ -69,7 +69,7 @@ export function CryptoTable() {
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="overflow-y-auto max-h-[calc(100dvh-16rem)] lg:max-h-[calc(100vh-18rem)]">
         {loading && (
           <div className="flex items-center justify-center p-12">
             <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent shadow-[0_0_15px_rgba(249,115,22,0.3)]" />
