@@ -10,11 +10,39 @@ export type CoinData = {
   price_change_percentage_24h: number
 }
 
-export async function fetchTopCoins(perPage = 100): Promise<CoinData[]> {
-  const url = `${COINGECKO_BASE}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false&price_change_percentage=24h`
+async function fetchCoinGecko(perPage = 100): Promise<CoinData[]> {
+  const url = `${COINGECKO_BASE}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false&price_change_percentage_24h&x_=${Date.now()}`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`CoinGecko error: ${res.status}`)
   return res.json()
+}
+
+type BinanceTicker = { symbol: string; lastPrice: string; priceChangePercent: string; quoteVolume: string }
+
+async function fetchBinance(limit = 100): Promise<CoinData[]> {
+  const res = await fetch('https://api.binance.com/api/v3/ticker/24hr')
+  if (!res.ok) throw new Error(`Binance error: ${res.status}`)
+  const all: BinanceTicker[] = await res.json()
+  const usdt = all.filter((t) => t.symbol.endsWith('USDT')).slice(0, limit)
+  return usdt.map((t, i) => ({
+    id: t.symbol.toLowerCase(),
+    symbol: t.symbol.replace('USDT', '').toLowerCase(),
+    name: t.symbol.replace('USDT', ''),
+    current_price: Number(t.lastPrice),
+    market_cap: Number(t.quoteVolume) * 1,
+    market_cap_rank: i + 1,
+    price_change_percentage_24h: Number(t.priceChangePercent),
+  }))
+}
+
+export async function fetchTopCoins(perPage = 100): Promise<CoinData[]> {
+  try {
+    return await fetchCoinGecko(perPage)
+  } catch {
+    const fallback = await fetchBinance(perPage)
+    if (fallback.length > 0) return fallback
+    throw new Error('All price APIs failed')
+  }
 }
 
 export async function fetchPrices(symbols: string[]): Promise<Record<string, { usd: number; usd_24h_change?: number }>> {
