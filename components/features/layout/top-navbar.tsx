@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Hexagon, Wallet } from 'lucide-react'
+import { Hexagon, Wallet, CheckCircle } from 'lucide-react'
 import { fetchTopCoins, type CoinData } from '@/lib/api'
+import { useWalletContext } from '@/lib/wallet-context'
 import { TickerItem } from './ticker-item'
 
 export function TopNavbar() {
+  const { connectedWallet, address } = useWalletContext()
   const [tickers, setTickers] = useState<CoinData[]>([])
   const dataRef = useRef<CoinData[]>([])
   const rafRef = useRef<number>(0)
@@ -85,10 +87,15 @@ export function TopNavbar() {
 
         <button
           type="button"
-          className="ml-auto flex shrink-0 items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-semibold text-accent-foreground shadow-[0_0_20px_rgba(251,191,36,0.45)] transition-all hover:shadow-[0_0_50px_rgba(251,191,36,0.8)] hover:brightness-110 md:gap-2 md:px-4 md:py-2.5 md:text-sm"
+          className={`ml-auto flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold shadow-[0_0_20px_var(--shadow-color)] transition-all hover:shadow-[0_0_50px_var(--shadow-color)] hover:brightness-110 md:gap-2 md:px-4 md:py-2.5 md:text-sm ${
+            connectedWallet
+              ? 'bg-success text-black shadow-green-500/45'
+              : 'bg-accent text-accent-foreground shadow-amber-500/45'
+          }`}
+          style={{ '--shadow-color': connectedWallet ? 'rgba(34,197,94,0.45)' : 'rgba(251,191,36,0.45)' } as React.CSSProperties}
         >
-          <Wallet className="size-3.5 md:size-4" />
-          <span className="hidden sm:inline">Connect</span> Hub
+          {connectedWallet ? <CheckCircle className="size-3.5 md:size-4" /> : <Wallet className="size-3.5 md:size-4" />}
+          <span className="hidden sm:inline">{connectedWallet ? 'Connected' : 'Connect'}</span> Hub
         </button>
       </div>
     </header>

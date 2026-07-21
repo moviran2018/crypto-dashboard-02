@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react'
 import { Wallet } from 'lucide-react'
 import { type Network } from '@/lib/crypto-data'
 import { useWallet } from '@/hooks/use-wallet'
+import { useWalletContext, type WalletOption } from '@/lib/wallet-context'
 import { AffiliateWidget } from '@/components/features/affiliate/affiliate-widget'
 import { AiPremium } from '@/components/features/affiliate/ai-premium'
-import { WalletConnect, type WalletOption } from './wallet-connect'
+import { WalletConnect } from './wallet-connect'
 import { WalletScanner } from './wallet-scanner'
 import { WalletDisplay } from './wallet-display'
 import { WalletError } from './wallet-error'
@@ -17,8 +18,7 @@ const CHAIN_NETWORK: Record<string, Network> = {
 
 export function WalletHub() {
   const [network, setNetwork] = useState<Network>('Ethereum')
-  const [address, setAddress] = useState('')
-  const [connectedWallet, setConnectedWallet] = useState<WalletOption | null>(null)
+  const { connectedWallet, address, setConnectedWallet, setAddress, disconnect } = useWalletContext()
   const [connecting, setConnecting] = useState(false)
   const [connectError, setConnectError] = useState<string | null>(null)
   const { assets, loading, error, scan } = useWallet()
@@ -30,8 +30,7 @@ export function WalletHub() {
           setAddress(accounts[0])
           handleConnectScan(accounts[0])
         } else {
-          setConnectedWallet(null)
-          setAddress('')
+          disconnect()
         }
       })
     }
@@ -107,7 +106,7 @@ export function WalletHub() {
             connecting={connecting}
             address={address}
             onConnect={connectWallet}
-            onDisconnect={() => { setConnectedWallet(null); setAddress(''); setConnectError(null) }}
+            onDisconnect={disconnect}
           />
 
           <WalletError message={connectError} />

@@ -2,12 +2,9 @@
 
 import { useState } from 'react'
 import { ChevronDown, Wallet, CheckCircle, X } from 'lucide-react'
+import { type WalletOption } from '@/lib/wallet-context'
 
-export type WalletOption = {
-  id: string
-  name: string
-  icon: string
-}
+export type { WalletOption }
 
 export const WALLET_OPTIONS: WalletOption[] = [
   { id: 'metamask', name: 'MetaMask', icon: '🦊' },
