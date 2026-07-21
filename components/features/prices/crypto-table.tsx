@@ -69,7 +69,7 @@ export function CryptoTable() {
         </button>
       </div>
 
-      <div className="overflow-y-auto max-h-[calc(100dvh-16rem)] lg:max-h-[calc(100vh-18rem)]">
+      <div className="overflow-y-scroll" style={{ maxHeight: 'calc(100vh - 200px)' }}>
         {loading && (
           <div className="flex items-center justify-center p-12">
             <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent shadow-[0_0_15px_rgba(249,115,22,0.3)]" />
