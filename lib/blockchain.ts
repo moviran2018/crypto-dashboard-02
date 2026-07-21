@@ -47,6 +47,32 @@ export type WalletAsset = {
 
 const COLORS = ['#f97316', '#fbbf24', '#22d3ee', '#a855f7', '#34d399', '#f472b6', '#64748b', '#06b6d4']
 
+async function scanErc20Tokens(address: string, urls: string[], tokens: typeof ETH_TOKENS, prices: Record<string, { usd: number }>): Promise<WalletAsset[]> {
+  const results = await Promise.allSettled(
+    tokens.map(async (token) => {
+      const result = await rpcCall(urls, 'eth_call', [{ to: token.address, data: encodeBalanceOf(address) }, 'latest']) as string
+      const balance = Number(decodeUint(result)) / 10 ** token.decimals
+      if (balance <= 0.001) return null
+      const price = prices[token.coingeckoId]?.usd || 0
+      return {
+        symbol: token.symbol,
+        name: token.name,
+        amount: balance.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' ' + token.symbol,
+        value: balance * price,
+      } as WalletAsset
+    })
+  )
+  let ci = 1
+  const assets: WalletAsset[] = []
+  for (const r of results) {
+    if (r.status === 'fulfilled' && r.value) {
+      assets.push({ ...r.value, color: COLORS[ci % COLORS.length] })
+      ci++
+    }
+  }
+  return assets
+}
+
 export async function scanEthereum(address: string): Promise<WalletAsset[]> {
   const addr = address.trim()
   if (!isValidEthAddress(addr)) {
@@ -61,25 +87,8 @@ export async function scanEthereum(address: string): Promise<WalletAsset[]> {
   assets.push({ symbol: 'ETH', name: 'Ethereum', amount: ethBalance.toFixed(4) + ' ETH', value: 0, color: COLORS[0] })
 
   const prices = await fetchTokenPrices(ETH_TOKENS)
-
-  let ci = 1
-  for (const token of ETH_TOKENS) {
-    try {
-      const result = await rpcCall(urls, 'eth_call', [{ to: token.address, data: encodeBalanceOf(addr) }, 'latest']) as string
-      const balance = Number(decodeUint(result)) / 10 ** token.decimals
-      if (balance > 0.001) {
-        const price = prices[token.coingeckoId]?.usd || 0
-        assets.push({
-          symbol: token.symbol,
-          name: token.name,
-          amount: balance.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' ' + token.symbol,
-          value: balance * price,
-          color: COLORS[ci % COLORS.length],
-        })
-        ci++
-      }
-    } catch { continue }
-  }
+  const tokenAssets = await scanErc20Tokens(addr, urls, ETH_TOKENS, prices)
+  assets.push(...tokenAssets)
 
   return assets
 }
@@ -95,30 +104,11 @@ export async function scanPolygon(address: string): Promise<WalletAsset[]> {
 
   const balanceHex = await rpcCall(urls, 'eth_getBalance', [addr, 'latest']) as string
   const maticBalance = Number(decodeUint(balanceHex)) / 1e18
-  if (maticBalance > 0.001) {
-    assets.push({ symbol: 'MATIC', name: 'Polygon', amount: maticBalance.toFixed(4) + ' MATIC', value: 0, color: COLORS[0] })
-  }
+  assets.push({ symbol: 'MATIC', name: 'Polygon', amount: maticBalance.toFixed(4) + ' MATIC', value: 0, color: COLORS[0] })
 
   const prices = await fetchTokenPrices(POLYGON_TOKENS)
-
-  let ci = 1
-  for (const token of POLYGON_TOKENS) {
-    try {
-      const result = await rpcCall(urls, 'eth_call', [{ to: token.address, data: encodeBalanceOf(addr) }, 'latest']) as string
-      const balance = Number(decodeUint(result)) / 10 ** token.decimals
-      if (balance > 0.001) {
-        const price = prices[token.coingeckoId]?.usd || 0
-        assets.push({
-          symbol: token.symbol,
-          name: token.name,
-          amount: balance.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' ' + token.symbol,
-          value: balance * price,
-          color: COLORS[ci % COLORS.length],
-        })
-        ci++
-      }
-    } catch { continue }
-  }
+  const tokenAssets = await scanErc20Tokens(addr, urls, POLYGON_TOKENS, prices)
+  assets.push(...tokenAssets)
 
   return assets
 }
@@ -130,9 +120,7 @@ export async function scanSolana(address: string): Promise<WalletAsset[]> {
 
   const balanceResult = await rpcCall(urls, 'getBalance', [addr]) as { value: number }
   const solBalance = balanceResult.value / 1e9
-  if (solBalance > 0.001) {
-    assets.push({ symbol: 'SOL', name: 'Solana', amount: solBalance.toFixed(4) + ' SOL', value: 0, color: COLORS[0] })
-  }
+  assets.push({ symbol: 'SOL', name: 'Solana', amount: solBalance.toFixed(4) + ' SOL', value: 0, color: COLORS[0] })
 
   let tokenAccounts: { account: { data: { parsed: { info: { mint: string; tokenAmount: { uiAmount: number } } } } } }[] = []
   try {
@@ -144,25 +132,26 @@ export async function scanSolana(address: string): Promise<WalletAsset[]> {
     tokenAccounts = result.value || []
   } catch { }
 
-  const prices = await fetchTokenPrices(SOLANA_TOKENS.map((t) => ({ ...t, address: t.mint, coingeckoId: t.coingeckoId })))
+  const prices = await fetchTokenPrices(SOLANA_TOKENS.map((t) => ({ coingeckoId: t.coingeckoId })))
+  const knownMints = new Map(SOLANA_TOKENS.map((t) => [t.mint, t]))
 
   let ci = 1
   for (const acc of tokenAccounts) {
     const mint = acc.account.data.parsed.info.mint
     const amount = acc.account.data.parsed.info.tokenAmount.uiAmount
     if (amount <= 0) continue
-    const token = SOLANA_TOKENS.find((t) => t.mint === mint)
-    if (token) {
-      const price = prices[token.coingeckoId]?.usd || 0
-      assets.push({
-        symbol: token.symbol,
-        name: token.name,
-        amount: amount.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' ' + token.symbol,
-        value: amount * price,
-        color: COLORS[ci % COLORS.length],
-      })
-      ci++
-    }
+    const known = knownMints.get(mint)
+    const symbol = known?.symbol || mint.slice(0, 4)
+    const name = known?.name || 'Unknown Token'
+    const price = prices[known?.coingeckoId || '']?.usd || 0
+    assets.push({
+      symbol,
+      name,
+      amount: amount.toLocaleString(undefined, { maximumFractionDigits: 4 }) + ' ' + symbol,
+      value: amount * price,
+      color: COLORS[ci % COLORS.length],
+    })
+    ci++
   }
 
   return assets
