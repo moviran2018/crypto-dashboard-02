@@ -21,7 +21,11 @@ export function WalletHub() {
   const { connectedWallet, address, setConnectedWallet, setAddress, disconnect } = useWalletContext()
   const [connecting, setConnecting] = useState(false)
   const [connectError, setConnectError] = useState<string | null>(null)
-  const { assets, loading, error, scan } = useWallet()
+  const { assets, loading, error, scan, clearAssets } = useWallet()
+
+  useEffect(() => {
+    if (!address) clearAssets()
+  }, [address])
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.ethereum) {

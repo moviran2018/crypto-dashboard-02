@@ -36,5 +36,10 @@ export function useWallet() {
     }
   }
 
-  return { assets, loading, error, scan }
+  function clearAssets() {
+    setAssets([])
+    setError(null)
+  }
+
+  return { assets, loading, error, scan, clearAssets }
 }
