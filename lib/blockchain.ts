@@ -1,10 +1,43 @@
 import { ETH_TOKENS, POLYGON_TOKENS, SOLANA_TOKENS } from './tokens'
 
 const RPC: Record<string, string[]> = {
-  Ethereum: ['https://ethereum-rpc.publicnode.com', 'https://cloudflare-eth.com', 'https://rpc.ankr.com/eth'],
+  Ethereum: [
+    'https://ethereum-rpc.publicnode.com',
+    'https://cloudflare-eth.com',
+    'https://rpc.ankr.com/eth',
+    'https://eth.drpc.org',
+    'https://1rpc.io/eth',
+    'https://eth.merkle.io',
+  ],
+  Polygon: [
+    'https://polygon-rpc.com',
+    'https://rpc.ankr.com/polygon',
+    'https://polygon.drpc.org',
+    'https://1rpc.io/matic',
+  ],
+  Solana: [
+    'https://api.mainnet-beta.solana.com',
+    'https://solana.drpc.org',
+    'https://rpc.ankr.com/solana',
+  ],
   Bitcoin: ['https://blockchain.info'],
-  Polygon: ['https://polygon-rpc.com', 'https://rpc.ankr.com/polygon'],
-  Solana: ['https://api.mainnet-beta.solana.com'],
+}
+
+async function rpcCallWithTimeout(url: string, body: string, ms = 5000): Promise<unknown> {
+  const ctrl = new AbortController()
+  const id = setTimeout(() => ctrl.abort(), ms)
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body,
+      signal: ctrl.signal,
+    })
+    if (!res.ok) throw new Error('status ' + res.status)
+    const json = await res.json()
+    if (json.error) throw new Error(json.error.message || 'rpc error')
+    return json.result
+  } finally { clearTimeout(id) }
 }
 
 function encodeBalanceOf(holder: string): string {
@@ -17,18 +50,9 @@ function decodeUint(hex: string): bigint {
 }
 
 async function rpcCall(urls: string[], method: string, params: unknown[]): Promise<unknown> {
+  const body = JSON.stringify({ jsonrpc: '2.0', id: 1, method, params })
   for (const url of urls) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-      })
-      if (!res.ok) continue
-      const json = await res.json()
-      if (json.error) continue
-      return json.result
-    } catch { continue }
+    try { return await rpcCallWithTimeout(url, body) } catch { continue }
   }
   throw new Error('All RPC endpoints failed for ' + method)
 }

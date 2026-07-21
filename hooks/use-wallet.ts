@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { scanWallet, type WalletAsset } from '@/lib/blockchain'
+import { cacheGet, cacheSet } from '@/lib/cache'
 import type { Network } from '@/lib/crypto-data'
 
 export function useWallet() {
@@ -12,12 +13,24 @@ export function useWallet() {
   async function scan(network: Network, address: string) {
     setLoading(true)
     setError(null)
+    setAssets([])
+
+    const cacheKey = `wallet_${network}_${address.toLowerCase()}`
+    const cached = cacheGet<WalletAsset[]>(cacheKey)
+    if (cached) {
+      setAssets(cached)
+    }
+
     try {
       const result = await scanWallet(network, address)
-      setAssets(result)
+      if (result.length > 0 || !cached) {
+        setAssets(result)
+        cacheSet(cacheKey, result, 120_000)
+      }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to scan wallet')
-      setAssets([])
+      if (!cached) {
+        setError(e instanceof Error ? e.message : 'Failed to scan wallet')
+      }
     } finally {
       setLoading(false)
     }

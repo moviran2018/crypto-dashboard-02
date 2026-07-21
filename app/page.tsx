@@ -2,12 +2,17 @@ import { TopNavbar } from '@/components/features/layout'
 import { PromoBanner } from '@/components/features/layout'
 import { CryptoTable } from '@/components/features/prices'
 import { WalletHub } from '@/components/features/wallet'
+import { ErrorBoundary } from '@/components/error-boundary'
 
 export default function Page() {
   return (
     <div className="min-h-svh cyber-grid">
-      <PromoBanner />
-      <TopNavbar />
+      <ErrorBoundary name="Promo">
+        <PromoBanner />
+      </ErrorBoundary>
+      <ErrorBoundary name="Navbar">
+        <TopNavbar />
+      </ErrorBoundary>
 
       <main className="mx-auto max-w-[1400px] px-4 py-6 md:px-6 md:py-8">
         <div className="mb-6">
@@ -20,13 +25,14 @@ export default function Page() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[3fr_2fr]">
-          {/* Left 60% — market table */}
           <div className="min-w-0 lg:h-[calc(100svh-13rem)]">
-            <CryptoTable />
+            <ErrorBoundary name="Price Table">
+              <CryptoTable />
+            </ErrorBoundary>
           </div>
-
-          {/* Right 40% — wallet hub */}
-          <WalletHub />
+          <ErrorBoundary name="Wallet Hub">
+            <WalletHub />
+          </ErrorBoundary>
         </div>
       </main>
     </div>
