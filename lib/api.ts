@@ -10,9 +10,17 @@ export type CoinData = {
   price_change_percentage_24h: number
 }
 
+async function fetchWithTimeout(url: string, ms = 5000): Promise<Response> {
+  const ctrl = new AbortController()
+  const id = setTimeout(() => ctrl.abort(), ms)
+  const res = await fetch(url, { signal: ctrl.signal })
+  clearTimeout(id)
+  return res
+}
+
 async function fetchCoinGecko(perPage = 100): Promise<CoinData[]> {
-  const url = `${COINGECKO_BASE}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false&price_change_percentage_24h&x_=${Date.now()}`
-  const res = await fetch(url)
+  const url = `${COINGECKO_BASE}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=false&price_change_percentage_24h`
+  const res = await fetchWithTimeout(url)
   if (!res.ok) throw new Error(`CoinGecko error: ${res.status}`)
   return res.json()
 }

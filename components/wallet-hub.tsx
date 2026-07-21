@@ -32,17 +32,8 @@ export function WalletHub() {
 
   const total = assets.reduce((sum, h) => sum + h.value, 0)
 
-  const holdings: WalletAsset[] = assets.length > 0 ? assets : (
-    scanned ? [] : [
-      { symbol: 'ETH', name: 'Ethereum', amount: '5.26 ETH', value: 18420, color: '#f97316' },
-      { symbol: 'USDC', name: 'USD Coin', amount: '9,200 USDC', value: 9200, color: '#fbbf24' },
-      { symbol: 'LINK', name: 'Chainlink', amount: '240 LINK', value: 4180, color: '#22d3ee' },
-      { symbol: 'UNI', name: 'Uniswap', amount: '250 UNI', value: 2450, color: '#a855f7' },
-      { symbol: 'Others', name: 'Others', amount: '12 tokens', value: 1350, color: '#64748b' },
-    ]
-  )
-
-  const holdingsTotal = scanned ? total : holdings.reduce((sum, h) => sum + h.value, 0)
+  const holdings: WalletAsset[] = assets
+  const holdingsTotal = total
 
   return (
     <aside className="flex flex-col gap-4">
@@ -163,10 +154,16 @@ export function WalletHub() {
               Token Balance
             </p>
             <p className="font-mono text-xl font-bold text-foreground">
-              ${holdingsTotal.toLocaleString('en-US')}
+              {holdings.length > 0 ? `$${holdingsTotal.toLocaleString('en-US')}` : '—'}
             </p>
           </div>
-          <DonutChart holdings={holdings} />
+          {holdings.length > 0 ? (
+            <DonutChart holdings={holdings} />
+          ) : (
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              {scanned ? 'No assets found' : 'Enter a wallet address and scan to see holdings'}
+            </p>
+          )}
         </div>
       </section>
 
