@@ -1,29 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Hexagon, TrendingDown, TrendingUp, Wallet } from 'lucide-react'
+import { Hexagon, Wallet } from 'lucide-react'
 import { fetchTopCoins, type CoinData } from '@/lib/api'
-
-function TickerItem({ symbol, price, change }: { symbol: string; price: number; change: number }) {
-  const up = change >= 0
-  return (
-    <div className="flex items-center gap-2 whitespace-nowrap px-5">
-      <span className="font-mono text-sm font-semibold text-foreground">{symbol}</span>
-      <span className="font-mono text-sm text-muted-foreground">
-        ${price?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-      </span>
-      <span
-        className={`flex items-center gap-0.5 font-mono text-xs font-medium ${
-          up ? 'text-success' : 'text-destructive'
-        }`}
-      >
-        {up ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
-        {up ? '+' : ''}
-        {change?.toFixed(2)}%
-      </span>
-    </div>
-  )
-}
+import { TickerItem } from './ticker-item'
 
 export function TopNavbar() {
   const [tickers, setTickers] = useState<CoinData[]>([])
@@ -57,10 +37,7 @@ export function TopNavbar() {
           </div>
         </div>
 
-        <div
-          className="relative hidden flex-1 overflow-hidden md:block"
-          aria-label="Live market prices"
-        >
+        <div className="relative hidden flex-1 overflow-hidden md:block" aria-label="Live market prices">
           <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-background to-transparent" />
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-background to-transparent" />
           {tickers.length > 0 && (
@@ -74,7 +51,7 @@ export function TopNavbar() {
 
         <button
           type="button"
-          className="ml-auto flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_0_20px_rgba(249,115,22,0.45)] transition-all hover:shadow-[0_0_30px_rgba(249,115,22,0.7)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="ml-auto flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_0_20px_rgba(249,115,22,0.45)] transition-all hover:shadow-[0_0_30px_rgba(249,115,22,0.7)]"
         >
           <Wallet className="size-4" />
           Connect Hub

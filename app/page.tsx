@@ -1,7 +1,7 @@
-import { TopNavbar } from '@/components/top-navbar'
-import { PromoBanner } from '@/components/promo-banner'
-import { CryptoTable } from '@/components/crypto-table'
-import { WalletHub } from '@/components/wallet-hub'
+import { TopNavbar } from '@/components/features/layout'
+import { PromoBanner } from '@/components/features/layout'
+import { CryptoTable } from '@/components/features/prices'
+import { WalletHub } from '@/components/features/wallet'
 
 export default function Page() {
   return (
