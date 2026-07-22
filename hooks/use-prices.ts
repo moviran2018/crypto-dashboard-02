@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { fetchTopCoins, type CoinData } from '@/lib/api'
-import { staleWhileRevalidate } from '@/lib/cache'
+import { cacheGet } from '@/lib/cache'
 
 export function usePrices() {
   const [coins, setCoins] = useState<CoinData[]>([])
@@ -10,38 +10,29 @@ export function usePrices() {
   const [error, setError] = useState<string | null>(null)
   const [source, setSource] = useState('cache')
   const mounted = useRef(true)
-  const hasData = useRef(false)
 
   useEffect(() => {
     mounted.current = true
-    load()
-
-    const interval = setInterval(load, 30_000)
-    return () => { mounted.current = false; clearInterval(interval) }
+    loadOnce()
+    return () => { mounted.current = false }
   }, [])
 
-  async function load() {
+  async function loadOnce() {
     try {
-      const data = await staleWhileRevalidate<CoinData[]>(
-        'prices', 60_000,
-        () => fetchTopCoins(130),
-        (fresh) => {
-          if (!mounted.current || fresh.length === 0) return
-          setCoins(fresh)
-          hasData.current = true
-          setSource('live')
-          setError(null)
-          setLoading(false)
-        },
-      )
-      if (data && data.length > 0 && mounted.current) {
-        setCoins(data)
-        hasData.current = true
+      const cached = cacheGet<CoinData[]>('prices')
+      if (cached && cached.length > 0) {
+        setCoins(cached)
         setSource('cache')
-        setError(null)
+        setLoading(false)
       }
+
+      const fresh = await fetchTopCoins(130)
+      if (!mounted.current) return
+      setCoins(fresh)
+      setSource('live')
+      setError(null)
     } catch {
-      // never clear existing data on error
+      if (coins.length === 0) setError('Unable to load prices.')
     } finally {
       if (mounted.current) setLoading(false)
     }
