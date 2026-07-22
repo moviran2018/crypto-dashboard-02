@@ -13,7 +13,8 @@ export function usePrices() {
   useEffect(() => {
     mounted.current = true
     load()
-    return () => { mounted.current = false }
+    const interval = setInterval(load, 60_000)
+    return () => { mounted.current = false; clearInterval(interval) }
   }, [])
 
   async function load() {
