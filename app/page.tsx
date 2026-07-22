@@ -1,5 +1,4 @@
 import { TopNavbar } from '@/components/features/layout'
-import { PromoBanner } from '@/components/features/layout'
 import { CryptoTable } from '@/components/features/prices'
 import { WalletHub } from '@/components/features/wallet'
 import { ErrorBoundary } from '@/components/error-boundary'
@@ -10,9 +9,6 @@ export default function Page() {
     <WalletProvider>
       <div className="min-h-svh cyber-grid">
         <div>
-          <ErrorBoundary name="Promo">
-            <PromoBanner />
-          </ErrorBoundary>
           <ErrorBoundary name="Navbar">
             <TopNavbar />
           </ErrorBoundary>
