@@ -89,10 +89,9 @@ const CACHE_KEY = 'prices'
 const CACHE_TTL = 60_000
 
 export async function fetchTopCoins(perPage = 100): Promise<CoinData[]> {
-  // 1. Try cache first
+  // 1. Try cache first (only if it has enough items)
   const cached = cacheGet<CoinData[]>(CACHE_KEY)
-  if (cached) {
-    // Refresh in background
+  if (cached && cached.length >= 50) {
     refreshCoinsInBackground(perPage)
     return cached
   }
@@ -102,15 +101,9 @@ export async function fetchTopCoins(perPage = 100): Promise<CoinData[]> {
     || await tryFetch('binance', () => fetchBinance(perPage))
     || await tryFetch('kucoin', () => fetchKuCoin(perPage))
 
-  if (data && data.length > 0) {
+  if (data && data.length >= 50) {
     cacheSet(CACHE_KEY, data, CACHE_TTL)
     return data
-  }
-
-  // 3. Ultimate fallback: anything still in cache (even expired)
-  const stale = localStorage.getItem('nc_' + CACHE_KEY)
-  if (stale) {
-    try { return JSON.parse(stale).data as CoinData[] } catch {}
   }
 
   return []
@@ -122,9 +115,9 @@ async function refreshCoinsInBackground(perPage: number) {
   if (refreshing) return
   refreshing = true
   try {
-    const data = await tryFetch('binance-bg', () => fetchBinance(perPage))
-      || await tryFetch('kucoin-bg', () => fetchKuCoin(perPage))
-    if (data && data.length > 0) {
+    const data = await tryFetch('coingecko-bg', () => fetchCoinGecko(perPage))
+      || await tryFetch('binance-bg', () => fetchBinance(perPage))
+    if (data && data.length >= 50) {
       cacheSet(CACHE_KEY, data, CACHE_TTL)
     }
   } finally { refreshing = false }

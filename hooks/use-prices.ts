@@ -19,7 +19,7 @@ export function usePrices() {
   async function load() {
     try {
       const data = await fetchTopCoins(130)
-      if (!mounted.current || data.length === 0) return
+      if (!mounted.current || data.length < 50) return
       setCoins(data)
       setSource('live')
       setError(null)
