@@ -13,11 +13,13 @@ export function usePrices() {
 
   useEffect(() => {
     mounted.current = true
-    loadOnce()
-    return () => { mounted.current = false }
+    refresh()
+
+    const interval = setInterval(refresh, 60_000)
+    return () => { mounted.current = false; clearInterval(interval) }
   }, [])
 
-  async function loadOnce() {
+  async function refresh() {
     try {
       const cached = cacheGet<CoinData[]>('prices')
       if (cached && cached.length > 0) {
