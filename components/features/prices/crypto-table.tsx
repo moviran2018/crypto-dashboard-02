@@ -37,8 +37,8 @@ export function CryptoTable() {
   }
 
   return (
-    <section className="flex h-full flex-col rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm overflow-hidden">
-      <div className="shrink-0 flex flex-col gap-3 border-b border-primary/15 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5">
+    <section className="rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm">
+      <div className="flex flex-col gap-3 border-b border-primary/15 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5">
         <div>
           <h2 className="text-lg font-bold tracking-tight text-foreground">Top 100 <span className="text-glow-gold text-accent">Assets</span></h2>
         </div>
@@ -55,7 +55,7 @@ export function CryptoTable() {
         </div>
       </div>
 
-      <div className="shrink-0 grid grid-cols-[2rem_1fr_auto_auto] items-center gap-2 border-b border-primary/20 bg-gradient-to-r from-primary/[0.08] to-accent/[0.04] px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-accent md:grid-cols-[3rem_1fr_9rem_7rem] md:gap-3 md:px-5">
+      <div className="grid grid-cols-[2rem_1fr_auto_auto] items-center gap-2 border-b border-primary/20 bg-gradient-to-r from-primary/[0.08] to-accent/[0.04] px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-accent md:grid-cols-[3rem_1fr_9rem_7rem] md:gap-3 md:px-5">
         <button type="button" onClick={() => toggleSort('market_cap_rank')} className="flex items-center gap-0.5 text-left transition-colors hover:text-primary md:gap-1">
           # <ArrowDownUp className="size-3" />
         </button>
@@ -68,7 +68,7 @@ export function CryptoTable() {
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="overflow-y-auto" style={{ maxHeight: '65vh' }}>
         {loading && (
           <div className="flex items-center justify-center p-12">
             <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent shadow-[0_0_15px_rgba(249,115,22,0.3)]" />
