@@ -19,7 +19,7 @@ export function TopNavbar() {
   useEffect(() => {
     async function load() {
       try {
-        const data = await fetchTopCoins(6)
+        const data = await fetchTopCoins(100)
         dataRef.current = data
         setTickers(data)
         setReady(true)
