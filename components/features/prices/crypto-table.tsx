@@ -40,7 +40,7 @@ export function CryptoTable() {
     <section className="rounded-2xl border border-primary/15 bg-card/90 backdrop-blur-sm">
       <div className="flex flex-col gap-3 border-b border-primary/15 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5">
         <div>
-          <h2 className="text-lg font-bold tracking-tight text-foreground">Top 100 <span className="text-glow-gold text-accent">Assets</span> <span className="text-xs font-normal text-muted-foreground">({rows.length} loaded)</span></h2>
+          <h2 className="text-lg font-bold tracking-tight text-foreground">Top 100 <span className="text-glow-gold text-accent">Assets</span></h2>
         </div>
         <div className="relative w-full sm:w-56">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />

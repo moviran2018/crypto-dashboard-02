@@ -10,7 +10,7 @@ export type CoinData = {
   price_change_percentage_24h: number
 }
 
-async function fetchWithTimeout(url: string, ms = 4000): Promise<Response> {
+async function fetchWithTimeout(url: string, ms = 15000): Promise<Response> {
   const ctrl = new AbortController()
   const id = setTimeout(() => ctrl.abort(), ms)
   try {
@@ -98,9 +98,9 @@ export async function fetchTopCoins(perPage = 100): Promise<CoinData[]> {
   }
 
   // 2. Try sources in order
-  const data = await tryFetch('binance', () => fetchBinance(perPage))
+  const data = await tryFetch('coingecko', () => fetchCoinGecko(perPage))
+    || await tryFetch('binance', () => fetchBinance(perPage))
     || await tryFetch('kucoin', () => fetchKuCoin(perPage))
-    || await tryFetch('coingecko', () => fetchCoinGecko(perPage))
 
   if (data && data.length > 0) {
     cacheSet(CACHE_KEY, data, CACHE_TTL)
